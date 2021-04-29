@@ -1,7 +1,10 @@
 package com.garbage.pojo;
 
+import io.swagger.annotations.ApiModel;
+
 import java.util.Date;
 
+@ApiModel(value = "QQ用户信息")
 public class QQUser {
     private Integer id;
 

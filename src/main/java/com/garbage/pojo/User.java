@@ -1,7 +1,10 @@
 package com.garbage.pojo;
 
+import io.swagger.annotations.ApiModel;
+
 import java.util.Date;
 
+@ApiModel(value = "用户信息")
 public class User {
     private Integer id;
 
