@@ -5,10 +5,10 @@
 
 <generatorConfiguration>
     <!--导入属性配置-->
-    <properties resource="application.properties"></properties>
+    <properties resource="application.properties"/>
 
     <!--指定特定数据库的jdbc驱动jar包的位置-->
-<!--    <classPathEntry location="E:\Repository\mysql\mysql-connector-java\5.1.6\mysql-connector-java-5.1.6.jar"/>-->
+    <!--    <classPathEntry location="E:\Repository\mysql\mysql-connector-java\5.1.6\mysql-connector-java-5.1.6.jar"/>-->
 
     <context id="default" targetRuntime="MyBatis3">
 
@@ -24,7 +24,7 @@
                 connectionURL="${spring.datasource.url}"
                 userId="${spring.datasource.username}"
                 password="${spring.datasource.password}">
-        <property name="nullCatalogMeansCurrent" value="true" />
+            <property name="nullCatalogMeansCurrent" value="true"/>
         </jdbcConnection>
 
 
@@ -66,7 +66,7 @@
         <!--<javaClientGenerator type="XMLMAPPER" targetPackage="com.garbage.dao" targetProject=".\src\main\java">-->
         <javaClientGenerator type="XMLMAPPER" targetPackage="com.garbage.dao" targetProject="./src/main/java">
             <!-- enableSubPackages:是否让schema作为包的后缀 -->
-            <property name="enableSubPackages" value="false" />
+            <property name="enableSubPackages" value="false"/>
         </javaClientGenerator>
 
 
