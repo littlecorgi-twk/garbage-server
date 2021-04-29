@@ -15,7 +15,7 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
     default-property-inclusion: non_null
-#  mvc:
-#    view:
-#      prefix: WEB-INF/jsp/
-#      suffix: .jsp
+  mvc:
+    view:
+      prefix: WEB-INF/jsp/
+      suffix: .jsp
