@@ -36,6 +36,8 @@ public class UserController {
     @Resource
     private IFileService iFileService;
 
+    private static final String MESSAGE_CODE = "67673";
+
 
     @ApiOperation(value = "登录")
     @RequestMapping(value = "login.do", method = RequestMethod.POST)
@@ -99,10 +101,13 @@ public class UserController {
     @RequestMapping(value = "getmsgcode.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse getMsgcode(@ApiParam(value = "手机号") @RequestParam String phoneNumber) {
-        if (PhoneUtil.getVerificationCode(phoneNumber) != null) {
-            return ServerResponse.createBySuccessMsg("发送成功");
-        }
-        return ServerResponse.createByErrorMsg("发送失败");
+        // dubug模式，因为bmob短信服务到期，所以采用此方式
+        return ServerResponse.createBySuccessMsg("（debug模式）发送成功，手机号是" + phoneNumber + " ,短信验证码是 " + MESSAGE_CODE);
+
+        // if (PhoneUtil.getVerificationCode(phoneNumber) != null) {
+        //     return ServerResponse.createBySuccessMsg("发送成功");
+        // }
+        // return ServerResponse.createByErrorMsg("发送失败");
     }
 
     @ApiOperation(value = "重置密码")
@@ -141,10 +146,14 @@ public class UserController {
             @ApiParam(value = "手机号") @RequestParam String phone,
             @ApiParam(value = "短信验证码") @RequestBody String msgCode
     ) {
-        if (!PhoneUtil.judgeCodeIsTrue(msgCode, phone)) {
+        if (!msgCode.equals(MESSAGE_CODE)) {
             return ServerResponse.createByErrorMsg("验证码不正确");
         }
         return ServerResponse.createBySuccessMsg("验证码正确");
+        // if (!PhoneUtil.judgeCodeIsTrue(msgCode, phone)) {
+        //     return ServerResponse.createByErrorMsg("验证码不正确");
+        // }
+        // return ServerResponse.createBySuccessMsg("验证码正确");
     }
 
     @ApiOperation(value = "获取用户信息")
