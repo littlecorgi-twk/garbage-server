@@ -161,7 +161,13 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public ServerResponse<User> getUserInfo(Integer userId) {
-        return null;
+        try {
+
+            return ServerResponse.createBySuccess(userMapper.selectByPrimaryKey(userId));
+        } catch (Exception e) {
+            logger.error("获取用户信息出错{}", e.getMessage());
+            return ServerResponse.createByError("找不到此用户信息");
+        }
     }
 
 
