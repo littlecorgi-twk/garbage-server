@@ -3,6 +3,8 @@ package com.garbage.controller;
 import com.garbage.common.Const;
 import com.garbage.common.ServerResponse;
 import com.garbage.dao.UserMapper;
+import com.garbage.dto.PhoneAndPasswordDTO;
+import com.garbage.dto.RegisterDTO;
 import com.garbage.pojo.User;
 import com.garbage.service.IFileService;
 import com.garbage.service.IUserService;
@@ -12,10 +14,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -43,12 +42,11 @@ public class UserController {
     @ResponseBody
     public ServerResponse login(
             HttpSession session, // Spring自动添加
-            @ApiParam(value = "手机号", example = "") String phoneNumber,
-            @ApiParam(value = "密码", example = "") String password
+            @ApiParam(value = "手机号和密码", example = "") @RequestBody PhoneAndPasswordDTO phoneAndPassword
     ) {
         ServerResponse serverResponse;
         try {
-            serverResponse = iUserService.login(phoneNumber, password);
+            serverResponse = iUserService.login(phoneAndPassword.getPhoneNumber(), phoneAndPassword.getPassword());
         } catch (Exception e) {
             return ServerResponse.createByErrorMsg("登录失败");
         }
@@ -80,7 +78,7 @@ public class UserController {
     @RequestMapping(value = "upload.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse upload(
-            @ApiParam(value = "图像文件") @RequestParam(value = "upload_file", required = false) MultipartFile file,
+            @ApiParam(value = "图像文件") @RequestBody MultipartFile file,
             HttpServletRequest request // Spring自动添加
     ) {
         Integer userId = (Integer) request.getAttribute(Const.ID);
@@ -100,7 +98,7 @@ public class UserController {
     @ApiOperation(value = "获取短信验证码")
     @RequestMapping(value = "getmsgcode.do", method = RequestMethod.POST)
     @ResponseBody
-    public ServerResponse getMsgcode(@ApiParam(value = "手机号") String phoneNumber) {
+    public ServerResponse getMsgcode(@ApiParam(value = "手机号") @RequestParam String phoneNumber) {
         if (PhoneUtil.getVerificationCode(phoneNumber) != null) {
             return ServerResponse.createBySuccessMsg("发送成功");
         }
@@ -112,7 +110,7 @@ public class UserController {
     @ResponseBody
     public ServerResponse loginResetPassword(
             HttpSession session, // Spring自动添加
-            @ApiParam(value = "密码", example = "") String password
+            @ApiParam(value = "密码", example = "") @RequestBody String password
     ) {
         ServerResponse serverResponse;
         Integer userId = (Integer) session.getAttribute(Const.ID);
@@ -127,23 +125,21 @@ public class UserController {
     @RequestMapping(value = "register.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse register(
-            @ApiParam(value = "手机号") String iphone,
-            @ApiParam(value = "密码") String password,
-            @ApiParam(value = "验证码") String msgCode
+            @ApiParam(value = "手机号、密码和短信验证码") RegisterDTO register
     ) {
         User user = new User();
-        user.setPhone(iphone);
-        user.setPassword(password);
-        user.setMsg(msgCode);
-        return iUserService.register(user, msgCode);
+        user.setPhone(register.getIphone());
+        user.setPassword(register.getPassword());
+        user.setMsg(register.getMsgCode());
+        return iUserService.register(user, register.getMsgCode());
     }
 
     @ApiOperation(value = "验证短信验证码")
     @RequestMapping(value = "check_msg.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse checkMsg(
-            @ApiParam(value = "手机号") String phone,
-            @ApiParam(value = "短信验证码") String msgCode
+            @ApiParam(value = "手机号") @RequestParam String phone,
+            @ApiParam(value = "短信验证码") @RequestBody String msgCode
     ) {
         if (!PhoneUtil.judgeCodeIsTrue(msgCode, phone)) {
             return ServerResponse.createByErrorMsg("验证码不正确");
@@ -167,7 +163,7 @@ public class UserController {
     @ResponseBody
     public ServerResponse<User> updateUserInfo(
             HttpSession session, // Spring自动添加
-            @ApiParam(value = "用户信息") User user
+            @ApiParam(value = "用户信息") @RequestBody User user
     ) {
         Integer userId = (Integer) session.getAttribute(Const.ID);
         user.setId(userId);
@@ -178,7 +174,7 @@ public class UserController {
     @RequestMapping(value = "qqlogin.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse qqLogin(
-            @ApiParam(value = "qqId") String qqId
+            @ApiParam(value = "qqId") @RequestBody String qqId
     ) {
         try {
             return iUserService.qqLogin(qqId);
