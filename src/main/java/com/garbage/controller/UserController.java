@@ -56,6 +56,7 @@ public class UserController {
         try {
             serverResponse = iUserService.login(phoneAndPassword.getPhoneNumber(), phoneAndPassword.getPassword());
         } catch (Exception e) {
+            logger.error(e.getMessage());
             return ServerResponse.createByErrorMsg("登录失败");
         }
         User user = (User) serverResponse.getData();

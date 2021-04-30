@@ -42,6 +42,7 @@ public class UserServiceImpl implements IUserService {
         }
         String MD5PassWord = MD5Util.MD5EncodeUtf8(password);
         User user = userMapper.selectUser(phoneNumber, MD5PassWord);
+        logger.info("登录获取到的用户信息{}", user);
         return ServerResponse.createBySuccess(user);
     }
 
@@ -100,7 +101,6 @@ public class UserServiceImpl implements IUserService {
         insertUser.setPassword(MD5Util.MD5EncodeUtf8(user.getPassword()));
         insertUser.setName("手机用户" + user.getPhone());
         insertUser.setPhone(user.getPhone());
-        insertUser.setPassword(user.getPassword());
         userMapper.insertSelective(insertUser);
 
         return ServerResponse.createByErrorMsg("注册成功");
