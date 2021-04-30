@@ -13,6 +13,9 @@ import com.google.common.collect.Maps;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,6 +26,7 @@ import javax.servlet.http.HttpSession;
 import java.util.Map;
 
 @Api(value = "用户相关操作")
+@Slf4j
 @Controller
 @RequestMapping("/user/")
 public class UserController {
@@ -35,6 +39,8 @@ public class UserController {
 
     @Resource
     private IFileService iFileService;
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     private static final String MESSAGE_CODE = "67673";
 
@@ -130,7 +136,7 @@ public class UserController {
     @RequestMapping(value = "register.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse register(
-            @ApiParam(value = "手机号、密码和短信验证码") RegisterDTO register
+            @ApiParam(value = "手机号、密码和短信验证码") @RequestBody RegisterDTO register
     ) {
         User user = new User();
         user.setPhone(register.getIphone());

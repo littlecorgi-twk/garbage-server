@@ -12,7 +12,10 @@ import com.garbage.service.IUserService;
 import com.garbage.util.JWTUtil;
 import com.garbage.util.MD5Util;
 import com.garbage.util.PhoneUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +23,7 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
-
+@Slf4j
 @Service("iUserService")
 public class UserServiceImpl implements IUserService {
 
@@ -29,6 +32,8 @@ public class UserServiceImpl implements IUserService {
 
     @Resource
     private QQUserMapper qqUserMapper;
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public ServerResponse login(String phoneNumber, String password) throws Exception {
@@ -93,11 +98,12 @@ public class UserServiceImpl implements IUserService {
 
         User insertUser = new User();
         insertUser.setPassword(MD5Util.MD5EncodeUtf8(user.getPassword()));
-        user.setName("手机用户" + user.getPhone());
+        insertUser.setName("手机用户" + user.getPhone());
         insertUser.setPhone(user.getPhone());
-        userMapper.insertSelective(user);
+        insertUser.setPassword(user.getPassword());
+        userMapper.insertSelective(insertUser);
 
-        return ServerResponse.createByErrorMsg("注册失败");
+        return ServerResponse.createByErrorMsg("注册成功");
 
     }
 
