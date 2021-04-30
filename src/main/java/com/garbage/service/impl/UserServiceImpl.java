@@ -122,13 +122,23 @@ public class UserServiceImpl implements IUserService {
     @Override
     public ServerResponse updateUserInfo(User user) {
         User updateUser = new User();
-        if (Const.checkSex(user.getSex())) {
-            updateUser.setSex(user.getSex());
+        if (user.getSex() != null) {
+            if (Const.checkSex(user.getSex())) {
+                updateUser.setSex(user.getSex());
+            }
         }
-        updateUser.setStage(user.getStage());
-        updateUser.setId(user.getId());
-        updateUser.setName(user.getName());
-        updateUser.setMsg(user.getMsg());
+        if (!user.getStage().isEmpty()) {
+            updateUser.setStage(user.getStage());
+        }
+        if (user.getId() >= 0) {
+            updateUser.setId(user.getId());
+        }
+        if (!user.getName().isEmpty()) {
+            updateUser.setName(user.getName());
+        }
+        if (!user.getMsg().isEmpty()) {
+            updateUser.setMsg(user.getMsg());
+        }
         if (userMapper.updateByPrimaryKeySelective(updateUser) > 0) {
             return ServerResponse.createBySuccessMsg("更新信息成功");
         }
