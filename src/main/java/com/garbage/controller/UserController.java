@@ -97,7 +97,7 @@ public class UserController {
         return ServerResponse.createBySuccess(fileMap);
     }
 
-    @ApiOperation(value = "获取验证码")
+    @ApiOperation(value = "获取短信验证码")
     @RequestMapping(value = "getmsgcode.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse getMsgcode(@ApiParam(value = "手机号") String phoneNumber) {
