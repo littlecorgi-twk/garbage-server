@@ -1,13 +1,10 @@
 package com.garbage.common;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-
-
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class ServerResponse <T>{
+public class ServerResponse<T> {
 
     private int status;
     private String msg;
@@ -34,8 +31,7 @@ public class ServerResponse <T>{
     }
 
     @JsonIgnore
-    public boolean isSuccess()
-    {
+    public boolean isSuccess() {
         return this.status == ResponseCode.SUCCESS.getCode();
     }
 
@@ -51,44 +47,36 @@ public class ServerResponse <T>{
         return data;
     }
 
-    public static com.garbage.common.ServerResponse createBySuccess()
-    {
+    public static com.garbage.common.ServerResponse createBySuccess() {
         return new com.garbage.common.ServerResponse(ResponseCode.SUCCESS.getCode());
     }
 
-    public static com.garbage.common.ServerResponse createBySuccessMsg(String msg)
-    {
+    public static com.garbage.common.ServerResponse createBySuccessMsg(String msg) {
         return new com.garbage.common.ServerResponse(ResponseCode.SUCCESS.getCode(), msg);
     }
 
-    public static <T> com.garbage.common.ServerResponse createBySuccess(T data)
-    {
+    public static <T> com.garbage.common.ServerResponse createBySuccess(T data) {
         return new com.garbage.common.ServerResponse(ResponseCode.SUCCESS.getCode(), data);
     }
 
-    public static <T> com.garbage.common.ServerResponse createBySuccess(String msg, T data)
-    {
+    public static <T> com.garbage.common.ServerResponse createBySuccess(String msg, T data) {
         return new com.garbage.common.ServerResponse(ResponseCode.SUCCESS.getCode(), msg, data);
     }
 
-    public static com.garbage.common.ServerResponse createByError()
-    {
+    public static com.garbage.common.ServerResponse createByError() {
 
         return new com.garbage.common.ServerResponse(ResponseCode.ERROR.getCode());
     }
 
-    public static com.garbage.common.ServerResponse createByErrorMsg(String msg)
-    {
+    public static com.garbage.common.ServerResponse createByErrorMsg(String msg) {
         return new com.garbage.common.ServerResponse(ResponseCode.ERROR.getCode(), msg);
     }
 
-    public static <T> com.garbage.common.ServerResponse createByError(T data)
-    {
+    public static <T> com.garbage.common.ServerResponse createByError(T data) {
         return new com.garbage.common.ServerResponse(ResponseCode.ERROR.getCode(), data);
     }
 
-    public static com.garbage.common.ServerResponse createByCodeErrorMsg(int status, String msg)
-    {
+    public static com.garbage.common.ServerResponse createByCodeErrorMsg(int status, String msg) {
         return new com.garbage.common.ServerResponse(status, msg);
     }
 

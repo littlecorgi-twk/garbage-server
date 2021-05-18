@@ -1,3 +1,5 @@
+CREATE DATABASE garbagecollection;
+
 USE garbagecollection;
 
 -- auto-generated definition
@@ -25,4 +27,14 @@ create table qq_user
     phone       char(11)    null,
     update_time timestamp   null,
     create_time timestamp   null
+);
+
+-- auto-generated definition
+create table garbage_collect
+(
+    id        int auto_increment
+        primary key,
+    latitude  double       not null,
+    longitude double       not null,
+    img       varchar(256) null
 );

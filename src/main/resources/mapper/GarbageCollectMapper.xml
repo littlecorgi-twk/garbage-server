@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.garbage.dao.GarbageCollectMapper">
+
+    <resultMap id="BaseResultMap" type="com.garbage.pojo.GarbageCollect">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Integer" jdbcType="INTEGER"/>
+            <arg column="latitude" javaType="java.lang.Double" jdbcType="DOUBLE"/>
+            <arg column="longitude" javaType="java.lang.Double" jdbcType="DOUBLE"/>
+            <arg column="img" javaType="java.lang.String" jdbcType="VARCHAR"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id,
+        latitude, longitude, img
+    </sql>
+    <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from garbage_collect
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectByLatLongCount" resultMap="BaseResultMap">
+        select *
+        from garbage_collect
+        where latitude = #{latitude,jdbcType=DOUBLE}
+          AND longitude = #{longitude,jdbcType=DOUBLE}
+    </select>
+    <select id="selectByLatLong" resultMap="BaseResultMap">
+        select *
+        from garbage_collect
+        where latitude BETWEEN #{latitude} - 0.045 AND #{latitude} + 0.045
+          AND longitude BETWEEN #{longitude} - 0.058 AND #{longitude} + 0.058
+    </select>
+    <delete id="delete">
+        delete
+        from garbage_collect
+    </delete>
+    <insert id="insertSelective" parameterType="com.garbage.pojo.GarbageCollect">
+        insert into garbage_collect
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="latitude != null">
+                latitude,
+            </if>
+            <if test="longitude != null">
+                longitude,
+            </if>
+            <if test="img != null">
+                img,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="latitude != null">
+                #{latitude,jdbcType=DOUBLE},
+            </if>
+            <if test="longitude != null">
+                #{longitude,jdbcType=DOUBLE},
+            </if>
+            <if test="img != null">
+                #{img,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+</mapper>

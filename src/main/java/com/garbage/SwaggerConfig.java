@@ -21,7 +21,8 @@ public class SwaggerConfig {
                 .select() // 选择哪些路径和api会生成document
 //                .apis(RequestHandlerSelectors.any())// 对所有api进行监控
 //                .apis(RequestHandlerSelectors.basePackage("com.garbage.controller"))// 选择监控的package
-                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))// 只监控有ApiOperation注解的接口
+                .apis(RequestHandlerSelectors
+                        .withMethodAnnotation(ApiOperation.class))// 只监控有ApiOperation注解的接口
                 .build();
         return docket;
     }

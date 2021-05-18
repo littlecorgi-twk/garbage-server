@@ -51,7 +51,8 @@ public class UserServiceImpl implements IUserService {
     public ServerResponse qqLogin(String qqId) throws Exception {
         QQUser qqUser = qqUserMapper.selectByQQId(qqId);
         if (qqUser == null) {
-            return ServerResponse.createByCodeErrorMsg(ResponseCode.NEED_PHONE.getCode(), "qq号为空，参数错误");
+            return ServerResponse
+                    .createByCodeErrorMsg(ResponseCode.NEED_PHONE.getCode(), "qq号为空，参数错误");
         } else {
             User user = userMapper.selectByPhone(qqUser.getPhone());
             return addToken(user);
@@ -81,7 +82,8 @@ public class UserServiceImpl implements IUserService {
     }
 
     public boolean checkValid(User user) {
-        if (StringUtils.isBlank(user.getPhone()) || StringUtils.isBlank(user.getPassword()) || StringUtils.isBlank(user.getPhone())) {
+        if (StringUtils.isBlank(user.getPhone()) || StringUtils
+                .isBlank(user.getPassword()) || StringUtils.isBlank(user.getPhone())) {
             return false;
         }
         return true;
@@ -159,7 +161,10 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public ServerResponse forgetResetPassword(String msgCode, String phoneNumber, String password) {
-        if (!PhoneUtil.judgeCodeIsTrue(msgCode, phoneNumber)) {
+        // if (!PhoneUtil.judgeCodeIsTrue(msgCode, phoneNumber)) {
+        //     return ServerResponse.createByErrorMsg("验证码错误");
+        // }
+        if (!msgCode.equals("67673")) {
             return ServerResponse.createByErrorMsg("验证码错误");
         }
         password = MD5Util.MD5EncodeUtf8(password);
@@ -191,7 +196,13 @@ public class UserServiceImpl implements IUserService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public ServerResponse qqRegister(String qqId, String phone, String msgCode, String img, String name) {
+    public ServerResponse qqRegister(
+            String qqId,
+            String phone,
+            String msgCode,
+            String img,
+            String name
+    ) {
         ServerResponse serverResponse;
         if (!(serverResponse = checkVaild(phone, Const.PHONE)).isSuccess()) {
             return serverResponse;

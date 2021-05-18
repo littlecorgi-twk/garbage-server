@@ -3,12 +3,14 @@ package com.garbage.controller;
 import com.garbage.common.Const;
 import com.garbage.common.ServerResponse;
 import com.garbage.dao.UserMapper;
+import com.garbage.dto.GarbageCollectDTO;
 import com.garbage.dto.PhoneAndPasswordDTO;
 import com.garbage.dto.RegisterDTO;
+import com.garbage.pojo.GarbageCollect;
 import com.garbage.pojo.User;
 import com.garbage.service.IFileService;
+import com.garbage.service.IGarbageCollectService;
 import com.garbage.service.IUserService;
-import com.garbage.util.PhoneUtil;
 import com.google.common.collect.Maps;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,7 +19,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
@@ -33,6 +39,9 @@ public class UserController {
 
     @Resource
     private IUserService iUserService;
+
+    @Resource
+    private IGarbageCollectService iGarbageCollectService;
 
     @Resource
     private UserMapper userMapper;
@@ -54,7 +63,8 @@ public class UserController {
     ) {
         ServerResponse serverResponse;
         try {
-            serverResponse = iUserService.login(phoneAndPassword.getPhoneNumber(), phoneAndPassword.getPassword());
+            serverResponse = iUserService
+                    .login(phoneAndPassword.getPhoneNumber(), phoneAndPassword.getPassword());
         } catch (Exception e) {
             logger.error(e.getMessage());
             return ServerResponse.createByErrorMsg("登录失败");
@@ -109,7 +119,7 @@ public class UserController {
     @ResponseBody
     public ServerResponse getMsgcode(@ApiParam(value = "手机号") @RequestParam String phoneNumber) {
         // dubug模式，因为bmob短信服务到期，所以采用此方式
-        return ServerResponse.createBySuccessMsg("（debug模式）发送成功，手机号是" + phoneNumber + " ,短信验证码是 " + MESSAGE_CODE);
+        return ServerResponse.createBySuccessMsg("发送成功，短信验证码是：" + MESSAGE_CODE);
 
         // if (PhoneUtil.getVerificationCode(phoneNumber) != null) {
         //     return ServerResponse.createBySuccessMsg("发送成功");
@@ -117,7 +127,7 @@ public class UserController {
         // return ServerResponse.createByErrorMsg("发送失败");
     }
 
-    @ApiOperation(value = "重置密码")
+    @ApiOperation(value = "重置密码（通过session修改）")
     @RequestMapping(value = "loginresetpassword.do", method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse loginResetPassword(
@@ -132,6 +142,19 @@ public class UserController {
             return ServerResponse.createByErrorMsg("重置失败");
         }
     }
+
+    @ApiOperation(value = "忘记密码（通过手机号修改）")
+    @RequestMapping(value = "resetPasswordWithoutLogin.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse resetPasswordWithoutLogin(
+            @ApiParam(value = "手机号") @RequestParam String phone,
+            @ApiParam(value = "验证码") @RequestParam String msgCode,
+            @ApiParam(value = "新密码") @RequestParam String password
+    ) {
+        ServerResponse serverResponse = iUserService.forgetResetPassword(msgCode, phone, password);
+        return serverResponse;
+    }
+
 
     @ApiOperation(value = "注册")
     @RequestMapping(value = "register.do", method = RequestMethod.POST)
@@ -184,6 +207,30 @@ public class UserController {
         Integer userId = (Integer) session.getAttribute(Const.ID);
         user.setId(userId);
         return iUserService.updateUserInfo(user);
+    }
+
+
+    @ApiOperation(value = "上传垃圾回收点")
+    @RequestMapping(value = "uploadgarbagecollect.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse uploadGarbageCollect(
+            @ApiParam(value = "经纬度和图片") @RequestBody GarbageCollectDTO garbageCollectDTO
+    ) {
+        GarbageCollect garbageCollect = new GarbageCollect();
+        garbageCollect.setLatitude(garbageCollectDTO.getLatitude());
+        garbageCollect.setLongitude(garbageCollectDTO.getLongitude());
+        garbageCollect.setImg(garbageCollectDTO.getImg());
+        return iGarbageCollectService.uploadGarbageCollect(garbageCollect);
+    }
+
+    @ApiOperation(value = "获取垃圾回收点")
+    @RequestMapping(value = "getgarbagecollect.do", method = RequestMethod.POST)
+    @ResponseBody
+    public ServerResponse getGarbageCollect(
+            @ApiParam(value = "纬度") @RequestParam double latitude,
+            @ApiParam(value = "经度") @RequestParam double longitude
+    ) {
+        return iGarbageCollectService.getGarbageCollect(latitude, longitude);
     }
 
     @ApiOperation(value = "QQ登录")
